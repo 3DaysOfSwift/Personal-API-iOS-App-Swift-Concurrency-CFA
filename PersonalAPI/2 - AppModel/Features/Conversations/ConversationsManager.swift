@@ -28,9 +28,20 @@ import Observation
     conversations = try await repository.load()
     loaded = true
   }
+  func refresh() async throws {
+    loaded = false
+    guard !isBusy else { return }
+    try await load()
+  }
   private func commit(_ updated: [Conversation]) async throws {
-    try await repository.save(updated)
-    conversations = updated.sorted { $0.updatedAt > $1.updatedAt }
+    do {
+      try await repository.save(updated, replacing: conversations)
+      conversations = updated.sorted { $0.updatedAt > $1.updatedAt }
+    } catch {
+      // A conflict must reload before retrying; the old baseline is no longer valid.
+      loaded = false
+      throw error
+    }
   }
   func send(_ question: String, in conversationID: UUID) async throws {
     try await load()

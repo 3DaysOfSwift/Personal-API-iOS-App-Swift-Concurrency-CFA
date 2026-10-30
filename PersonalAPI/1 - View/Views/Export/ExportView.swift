@@ -39,7 +39,7 @@ struct ExportView: View {
             )
             .frame(maxWidth: .infinity, minHeight: 44)
           }
-          .buttonStyle(PersonalAPIButtonStyle(appearance: .filled))
+          .buttonStyle(PersonalAPIButtonStyle(appearance: .outlined))
           .disabled(viewModel.isExporting)
           if viewModel.momentCount == 0 {
             Text(

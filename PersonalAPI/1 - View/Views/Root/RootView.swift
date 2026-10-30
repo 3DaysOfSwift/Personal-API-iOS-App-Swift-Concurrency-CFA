@@ -49,6 +49,10 @@ struct RootView: View {
         }
       }
     }
+    .disabled(viewModel.isRestoring)
+    .task(id: scenePhase) {
+      if scenePhase == .active { await viewModel.becameActive() }
+    }
     .onChange(of: scenePhase) { _, phase in
       if phase == .background { viewModel.enteredBackground() }
     }

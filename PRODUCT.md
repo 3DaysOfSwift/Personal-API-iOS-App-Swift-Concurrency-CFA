@@ -13,7 +13,7 @@ A private lifetime dataset, built one Moment at a time. Training stays useful fo
 - Open export is a core feature. Stable IDs, original text, source, timestamps and profile facts must leave the app intact.
 - Answers must expose their evidence. Retrieved text and inferred conclusions are different things. Abstain when evidence is missing; do not manufacture personal history or causal explanations.
 - Privacy is architectural. Collection should be deliberate, minimal and understandable.
-- iCloud, when added, is synchronization through the user’s account. Do not claim it is a backup or enabled until configured and verified.
+- iCloud is synchronization through the user’s account. Do not claim it is a backup or enabled until configured and verified.
 
 ## Version 0.1: the complete loop
 
@@ -34,7 +34,7 @@ Query uses the on-device Foundation Models language model where available to sel
 
 Face ID/device-passcode lock and inactive-screen concealment are included. This is an application access gate, not a separately encrypted vault. Exported JSON is plaintext and outside the app lock.
 
-No iCloud synchronization, import, HealthKit, attachments, semantic index, network service. Profile corrections and portable archive import are subsequent work. Settings supports journal entry editing and deletion; the user’s revised words become canonical, with derived metadata regenerated. Do not market this prototype as a sole lifetime archive; users can export now.
+Public dataset import, HealthKit and attachments remain out of scope. Private CloudKit sync and recovery backups require the signed-device verification described in Documentation/ICLOUD_AND_RECOVERY.md. Profile corrections and portable archive import are subsequent work. Settings supports journal entry editing and deletion; the user’s revised words become canonical, with derived metadata regenerated. Do not market this prototype as a sole lifetime archive; users can export now.
 
 ## Next acceptance milestones
 
@@ -43,7 +43,7 @@ No iCloud synchronization, import, HealthKit, attachments, semantic index, netwo
 - Availability-gated on-device structured enrichment with source spans and uncertainty.
 - Semantic retrieval evaluated against a small labelled collection of known questions and source IDs.
 - Evidence-grounded synthesis evaluated separately from retrieval.
-- Opt-in private iCloud synchronization after account, conflict and migration testing.
+- Complete signed-device iCloud account, conflict and recovery verification before release.
 
 ## Conversation prototype
 

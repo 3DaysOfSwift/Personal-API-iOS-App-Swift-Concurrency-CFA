@@ -26,7 +26,7 @@ struct EditJournalEntryView: View {
         .font(.footnote).foregroundStyle(theme.palette.secondary)
         Button("Save changes") {
           viewModel.requestSave()
-        }.buttonStyle(PersonalAPIButtonStyle(appearance: .filled)).disabled(!viewModel.canSave)
+        }.buttonStyle(PersonalAPIButtonStyle(appearance: .outlined)).disabled(!viewModel.canSave)
         if viewModel.isWorking { ProgressView() }
         if let error = viewModel.error { Text(error).foregroundStyle(theme.palette.error) }
         Divider()

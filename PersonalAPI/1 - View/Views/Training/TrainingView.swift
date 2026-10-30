@@ -26,9 +26,8 @@ struct TrainingView: View {
           } label: {
             Label("Log Moment", systemImage: "arrow.up").frame(maxWidth: .infinity).padding(8)
           }
-          .buttonStyle(PersonalAPIButtonStyle(appearance: .filled)).foregroundStyle(
-            theme.palette.onAccent
-          ).disabled(!viewModel.canSave)
+          .buttonStyle(PersonalAPIButtonStyle(appearance: .outlined))
+          .disabled(!viewModel.canSave)
           if viewModel.didSave {
             Text(
               !presentedFromChat

@@ -116,7 +116,7 @@ For shared Model and presentation-state tests on macOS:
 swift test
 ```
 
-The latest local shared-suite run on **16 September 2026** completed with **130 passed, four opt-in live-AI checks skipped, and zero failures**. Coverage includes dedicated suites for all 13 screen ViewModels, feature behaviours, persistence, theme restoration and controlled concurrency cases.
+The latest local shared-suite run on **16 September 2026** completed with **157 passed, four opt-in live-AI checks skipped, and zero failures**. Coverage includes dedicated suites for all 14 screen ViewModels, feature behaviours, persistence, theme restoration and controlled concurrency cases.
 
 The macOS harness does not exercise iPhone rendering or UIKit keyboard interaction. Recent UI changes passed source typechecking; Simulator access was unavailable for visual verification. See [VALIDATION.md](VALIDATION.md) and the [unit-test audit](Documentation/UNIT_TEST_AUDIT.md) for recorded checks and their scope; older entries describe earlier project states.
 
@@ -130,6 +130,6 @@ The macOS harness does not exercise iPhone rendering or UIKit keyboard interacti
 
 ## Project status
 
-Personal API is under active development. Life Map is experimental, AI results can be incomplete or incorrect, and original journal passages remain available for inspection. iCloud sync, dataset import and HealthKit integration are not implemented.
+Personal API is under active development. Life Map is experimental, AI results can be incomplete or incorrect, and original journal passages remain available for inspection. Private iCloud sync and recovery backups are implemented, with Apple container provisioning and signed-device verification still required. Public dataset import and HealthKit integration are not implemented. See [iCloud and recovery setup](Documentation/ICLOUD_AND_RECOVERY.md).
 
 See [PRODUCT.md](PRODUCT.md) for product principles. When proposing changes, preserve original journal content, keep business behaviour in its owning feature, and include relevant tests and verification details.

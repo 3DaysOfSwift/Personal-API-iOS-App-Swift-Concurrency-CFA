@@ -134,7 +134,7 @@ import Observation
     guard moments.contains(where: { $0.id == source.id && $0.text == source.text }) else {
       return false
     }
-    let updated = try await repository.saveAnalysis(result, momentID: source.id)
+    let updated = try await repository.saveAnalysis(result, source: source)
     if let index = moments.firstIndex(where: { $0.id == source.id }) { moments[index] = updated }
     return true
   }

@@ -25,7 +25,7 @@ struct SettingsView: View {
           Section("Your data") {
             NavigationLink("Manage journal entries") { JournalEntriesView() }
             LabeledContent("Storage", value: "On this device")
-            LabeledContent("iCloud sync", value: "Not configured")
+            NavigationLink("iCloud sync and recovery backups") { BackupsView() }
             Button("Export your dataset · JSON") {
               viewModel.requestExport()
             }.disabled(viewModel.isWorking)

@@ -1,20 +1,30 @@
 {
-  "configurations" : [
-    { "id" : "7F4A9489-9BC9-4681-A013-A80F9D9787B6", "name" : "Controlled interleavings", "options" : {} }
-  ],
-  "defaultOptions" : {},
-  "testTargets" : [
+  "configurations": [
     {
-      "target" : {
-        "containerPath" : "container:PersonalAPI.xcodeproj",
-        "identifier" : "A94A8FE5CCB19BA61C4C0873",
-        "name" : "PersonalAPITests"
+      "id": "7F4A9489-9BC9-4681-A013-A80F9D9787B6",
+      "name": "Controlled interleavings",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {},
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:PersonalAPI.xcodeproj",
+        "identifier": "A94A8FE5CCB19BA61C4C0873",
+        "name": "PersonalAPITests"
       },
-      "selectedTests" : [
-        "AuthenticationRaceTests", "ConversationsRaceTests", "LifeMapRaceTests",
-        "MomentsRaceTests", "ProfileRaceTests", "QueryRaceTests", "SettingsRaceTests"
+      "selectedTests": [
+        "AuthenticationRaceTests",
+        "ConversationsRaceTests",
+        "LifeMapRaceTests",
+        "MomentsRaceTests",
+        "ProfileRaceTests",
+        "QueryRaceTests",
+        "SettingsRaceTests",
+        "BackupRaceTests"
       ]
     }
   ],
-  "version" : 1
+  "version": 1
 }

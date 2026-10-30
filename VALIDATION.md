@@ -164,3 +164,26 @@ Removed the failing LaunchScreen.storyboard and all project references. Both app
 ## Chat layout cycle repair — 16 September 2026
 
 User confirmed the app runs after the launch repair, but supplied repeated AttributeGraph cycle warnings. Removed the composer geometry callback and the SwiftUI clearance/height state that rebuilt the hosted composer after layout. Transcript and composer now share a native controller with direct constraints to one another and the keyboard guide. Removed the obsolete passthrough overlay controller. Responder changes are deferred outside updateUIView and coalesced using the current focus request. Swift parsing, standalone iOS SDK typechecking of both native components, and diff checks pass. Runtime disappearance of the warnings and interactive keyboard tracking still require device validation; no simulator runtime is accessible here.
+
+
+## iCloud and recovery implementation — 16 September 2026
+
+- Shared macOS suite: 153 discovered, 149 passed, 4 opt-in live-AI checks skipped; zero failures.
+- iOS UI source typecheck passed. This uses the existing isolated UI harness, not an iPhone runtime.
+- Generic iOS Xcode build attempted, blocked by unavailable CoreSimulator runtimes at asset-catalog compilation. No signed-cloud or visual validation claimed.
+- V1 unversioned store migration exercised using a disk-backed fixture; real installed-device upgrade remains pending.
+- Cloud copy policy tested with local-file adapter; actual coordinated cloud I/O remains a device check.
+- See Documentation/ICLOUD_AND_RECOVERY.md for the behaviour contract and release checklist.
+- Corrected a pre-existing ThemeManager setter typo (`theme.id` → `palette.id`) that prevented the initial shared-suite baseline compiling.
+
+## Pre-release simplification
+
+Removed the unused JSON conversation repository, its import/marker code, historical schema migration and migration-only tests at the owner's request. One current schema is used. Conversation reopen/export coverage now exercises the shared database directly. Earlier migration results above describe the superseded implementation.
+
+## Actionable sync errors
+
+Shared suite: 158 discovered, 154 passed, 4 opt-in live-AI checks skipped. Added guidance classification, nested CloudKit failures, backup/sync error separation, account checks, stale-result protection and ViewModel coverage. iOS UI source typecheck passed; no device runtime or live CloudKit transport verification claimed.
+
+## Recovery error context
+
+The Backups screen now labels the failed operation, explains its data impact and next step, and places raw errors inside Technical details. Restore failures distinguish pre-commit failure from post-restore refresh failure. Shared suite: 157 passed, 4 opt-in checks skipped; iOS UI source typecheck passed.

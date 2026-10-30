@@ -94,27 +94,23 @@ import XCTest
     XCTAssertTrue(reloaded.conversations.isEmpty)
     XCTAssertEqual(query.contexts.count, 1)
   }
-  func testLocalArchiveRoundTripAndCorruptFileIsNotReset() async throws {
+  func testDatabaseConversationRoundTripAndExport() async throws {
     let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: folder) }
-    let url = folder.appendingPathComponent("chats.json")
-    let store = LocalConversationStore(url: url)
+    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    let url = folder.appendingPathComponent("chats.store")
+    let store = LocalDataStore(storeURL: url)
     let manager = ConversationsManager(
       repository: store, query: ConversationQueryStub(), now: { Date() })
     let id = UUID()
     try await manager.send("My question", in: id)
-    let loaded = try await LocalConversationStore(url: url).load()
+    let loaded = try await LocalDataStore(storeURL: url).load()
     XCTAssertEqual(loaded.first?.id, id)
     XCTAssertEqual(
       loaded.first?.turns.first?.result?.generatedAnswer?.text, "Your recorded answer.")
     let exported = try await manager.export()
     XCTAssertTrue(String(decoding: exported, as: UTF8.self).contains("My question"))
-    try Data("broken".utf8).write(to: url)
-    do {
-      _ = try await LocalConversationStore(url: url).load()
-      XCTFail("Expected decoding error")
-    } catch {}
-    XCTAssertEqual(try String(contentsOf: url), "broken")
+
   }
 }
 

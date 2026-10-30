@@ -3,6 +3,7 @@ import Foundation
 /// The single live graph. Feature rules and screen state belong to their owners.
 @MainActor final class AppModel {
   static let shared = AppModel.live()
+  let backupFeature: any BackupFeature
   let lifeMapFeature: any LifeMapFeature
   let momentsFeature: any MomentsFeature
   let profileFeature: any ProfileFeature
@@ -15,8 +16,9 @@ import Foundation
   init(
     moments: any MomentsFeature, profile: any ProfileFeature, query: any QueryFeature,
     authentication: any AuthenticationFeature, settings: any SettingsFeature,
-    conversations: any ConversationsFeature, lifeMap: any LifeMapFeature
+    conversations: any ConversationsFeature, lifeMap: any LifeMapFeature, backup: any BackupFeature
   ) {
+    backupFeature = backup
     lifeMapFeature = lifeMap
     conversationsFeature = conversations
     momentsFeature = moments
@@ -27,7 +29,7 @@ import Foundation
   }
   static func live() -> AppModel {
     let now: @Sendable () -> Date = { Date() }
-    let repository = LocalDataStore()
+    let repository = LocalDataStore(cloudEnabled: true)
     let preferences = LocalPreferences(defaults: .standard)
     let moments = MomentsManager(
       repository: repository, processor: LocalMomentProcessor(now: now), now: now)
@@ -35,10 +37,20 @@ import Foundation
     let query = QueryManager(
       repository: repository, retriever: MomentRetriever(), index: LocalQueryIndex(),
       semanticSearch: OnDeviceMomentSearch(), answerer: OnDeviceMomentAnswerer())
-    let chatURL = URL.applicationSupportDirectory.appendingPathComponent(
-      "PersonalAPI/conversations-v1.json")
     let conversations = ConversationsManager(
-      repository: LocalConversationStore(url: chatURL), query: query, now: now)
+      repository: repository, query: query, now: now)
+    let backup = BackupManager(
+      repository: repository,
+      files: RecoveryBackupFiles(
+        folder: URL.applicationSupportDirectory.appendingPathComponent("PersonalAPI/Backups")),
+      account: CloudAccountChecker(), preferences: preferences, now: now,
+      canRestore: { !conversations.isBusy },
+      reload: {
+        async let refreshMoments: Void = moments.refresh()
+        async let refreshProfile: Void = profile.refresh()
+        _ = await (refreshMoments, refreshProfile)
+        try await conversations.refresh()
+      })
     return AppModel(
       moments: moments, profile: profile,
       query: query,
@@ -47,17 +59,20 @@ import Foundation
       settings: SettingsManager(
         preferences: preferences, repository: repository, moments: moments, profile: profile),
       conversations: conversations,
-      lifeMap: LifeMapManager(repository: repository, extractor: LifeMapExtractor()))
+      lifeMap: LifeMapManager(repository: repository, extractor: LifeMapExtractor()), backup: backup
+    )
   }
   func applicationDidFinishLaunching() {
     guard launchTask == nil else { return }
     // Preferences are ready before any screen renders; construction itself does no I/O.
     authenticationFeature.loadPreference()
     settingsFeature.loadPreference()
+    backupFeature.observeChanges()
     launchTask = Task {
       async let moments: Void = momentsFeature.loadIfRequired()
       async let profile: Void = profileFeature.loadIfRequired()
       _ = await (moments, profile)
+      await backupFeature.backup(force: false)
     }
   }
   func awaitInitialLoads() async { await launchTask?.value }

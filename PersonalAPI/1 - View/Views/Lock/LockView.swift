@@ -8,8 +8,8 @@ struct LockView: View {
       Image(systemName: "lock.fill").font(.largeTitle)
       Text("Your life. Yours alone.").font(.title2)
       Button("Unlock Personal API") { viewModel.requestUnlock() }.buttonStyle(
-        PersonalAPIButtonStyle(appearance: .filled)
-      ).foregroundStyle(theme.palette.onAccent).disabled(viewModel.authenticating)
+        PersonalAPIButtonStyle(appearance: .outlined)
+      ).disabled(viewModel.authenticating)
       if let error = viewModel.error {
         Text(error).font(.footnote).foregroundStyle(theme.palette.error)
       }

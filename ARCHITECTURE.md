@@ -101,7 +101,9 @@ The app gate is not a separate encryption system. Exported JSON is plaintext. Ph
 
 The original v1 SwiftData class identities (`Moment`, `PersonalFact`) and stored properties are retained inside storage. Domain snapshots are separate types, so refactoring folder ownership does not require renaming the persistent entities. No store-reset fallback is used. Failed loads remain visible and retryable; one feature’s error does not conceal the others.
 
-The default configuration still disables CloudKit. Before any future persisted-schema change, introduce a tested VersionedSchema/SchemaMigrationPlan using real v1 fixtures. This refactor has not been tested against an installed iPhone’s pre-refactor store.
+The live configuration selects a private CloudKit container with one current schema for entries, facts and conversations. Because the app is pre-release, no historical schema migration or legacy chat-file import is maintained. Test repositories explicitly disable CloudKit.
+
+`BackupManager` owns recovery status and serializes backup/restore workflows. `RecoveryBackupFiles` owns file rotation and coordinated iCloud Drive copying. `LocalDataStore` takes full snapshots and restores them with a pre-restore safety copy. See [the behaviour contract and provisioning checklist](Documentation/ICLOUD_AND_RECOVERY.md).
 
 Queries, export and enrichment still load whole collections. Indexed lookup, pagination and background batching are subsequent scaling work, not claims about this prototype.
 
@@ -109,7 +111,7 @@ Queries, export and enrichment still load whole collections. Indexed lookup, pag
 
 The v1 JSON structure is retained: format, schemaVersion, exportedAt, moments and facts. Source text, UUIDs, source provenance, timestamps and derived envelopes survive export. Dates use Foundation Codable numeric seconds since 2001-01-01 UTC. Unknown/corrupt derived data remains preserved as base64 while raw text stays readable; the UI exposes a metadata issue and regeneration option.
 
-Export reads both collections without suspension between them on the repository actor, preventing app writes from interleaving. SwiftUI’s FileDocument adapter stays in the View layer. Import is not yet implemented.
+Export reads both collections without suspension between them on the repository actor, preventing app writes from interleaving. SwiftUI’s FileDocument adapter stays in the View layer. Public dataset import is not implemented; versioned recovery-file restoration is a separate capability.
 
 PrivacyInfo declares app-owned UserDefaults access using CA92.1, consistent with [Apple’s required-reason documentation](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype). No developer-server collection or tracking is implemented.
 
@@ -169,13 +171,13 @@ Query distinguishes a successful retrieval with no evidence, an explicit answer 
 
 ## Conversation feature
 
-QueryView → QueryViewModel → ConversationsFeature → ConversationsManager owns the chat workflow. QueryManager remains responsible for fresh journal retrieval and grounded generation. AppModel.live() explicitly composes both features and LocalConversationStore.
+QueryView → QueryViewModel → ConversationsFeature → ConversationsManager owns the chat workflow. QueryManager remains responsible for fresh journal retrieval and grounded generation. AppModel.live() explicitly composes both features and LocalDataStore.
 
-Conversations are a separate versioned JSON archive in Application Support, written atomically by a repository actor. Existing SwiftData entities, journal data and bundle identity are unchanged. Questions are saved before inference. Interrupted turns can be answered again; retries replace only the latest answer without duplicating its question. A single in-flight mutation prevents archive writes racing across suspension. Failed writes are surfaced and never published as saved state.
+Conversations are stored alongside journal data in SwiftData by the shared repository actor. Questions are saved before inference. Interrupted turns can be answered again; retries replace only the latest answer without duplicating its question. A single in-flight mutation prevents archive writes racing across suspension. Failed writes are surfaced and never published as saved state.
 
 The model receives the current question and at most four earlier questions (500 characters each) to resolve conversational references. Earlier generated answers and feedback are excluded from the model input. Only freshly retrieved journal text is evidence. This deliberately bounded prototype may need clarification when a reference depends on older discussion or an AI answer. Prompt guidance is not a factuality guarantee.
 
-Saved chats retain answer results, source snapshots and optional feedback. Deleting a chat only deletes its archive entry. Chat export is available independently from journal export, via the conversation menu. Feedback is local evaluation data; it is neither model training nor a journal correction.
+Saved chats retain answer results, source snapshots and optional feedback. Deleting a chat removes its database record. Chat export is available independently from journal export, via the conversation menu. Feedback is local evaluation data; it is neither model training nor a journal correction.
 
 UI state (selected conversation, composer, sheets, keyboard and cancellable task) remains in QueryView/QueryViewModel. The conversation feature owns authoritative messages and persistence. The raised composer and navigation toggle are preserved.
 

@@ -13,7 +13,7 @@ struct QueryView: View {
           ScrollView {
             VStack(alignment: .leading, spacing: 28) {
               if viewModel.turns.isEmpty {
-                Text("New Chat").font(.largeTitle.bold())
+                Text("My life.\nMy Moments").font(.largeTitle.bold())
                 Text("Search your own personal API and ask questions about your life.")
                   .foregroundStyle(theme.palette.secondary)
               }
@@ -60,7 +60,7 @@ struct QueryView: View {
                       Label("Ask Personal API", systemImage: "arrow.up")
                         .frame(maxWidth: .infinity).padding(8)
                     }
-                    .buttonStyle(PersonalAPIButtonStyle(appearance: .filled))
+                    .buttonStyle(PersonalAPIButtonStyle(appearance: .outlined))
                     .disabled(!viewModel.canSearch)
                   }
                 }

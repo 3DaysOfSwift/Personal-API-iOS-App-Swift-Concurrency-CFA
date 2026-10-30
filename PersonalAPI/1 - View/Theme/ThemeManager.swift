@@ -3,7 +3,7 @@ import SwiftUI
 
 @MainActor @Observable final class ThemeManager {
   var palette: AppColourTheme {
-    didSet { preferences.colourThemeID = theme.id }
+    didSet { preferences.colourThemeID = palette.id }
   }
 
   private let preferences: any PreferencesRepository

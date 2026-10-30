@@ -27,3 +27,12 @@ import SwiftData
     self.value = value
   }
 }
+
+@Model final class StoredConversation {
+  var id: UUID = UUID()
+  var payload: Data = Data()
+  init(id: UUID, payload: Data) {
+    self.id = id
+    self.payload = payload
+  }
+}

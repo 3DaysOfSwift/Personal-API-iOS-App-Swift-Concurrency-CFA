@@ -127,7 +127,7 @@ struct AppColourTheme: Equatable, Identifiable {
 
 /// Keeps the visible button surface and its tap area at least 40 points tall.
 struct PersonalAPIButtonStyle: ButtonStyle {
-  enum Appearance { case plain, bordered, filled, outlined }
+  enum Appearance { case plain, bordered, outlined }
   var appearance: Appearance = .plain
   var minimumHeight: CGFloat = 40
   @Environment(ThemeManager.self) private var theme
@@ -138,13 +138,13 @@ struct PersonalAPIButtonStyle: ButtonStyle {
       .padding(.horizontal, appearance == .plain ? 0 : 12)
       .frame(minHeight: minimumHeight)
       .foregroundStyle(
-        appearance == .outlined
-          ? .white : (appearance == .filled ? theme.palette.onAccent : theme.palette.primary)
+        appearance == .outlined ? theme.palette.interactiveAccent : theme.palette.primary
       )
       .background(background, in: RoundedRectangle(cornerRadius: 12))
       .overlay {
         if appearance == .outlined {
-          RoundedRectangle(cornerRadius: 12).strokeBorder(.white, lineWidth: 1)
+          RoundedRectangle(cornerRadius: 12)
+            .strokeBorder(theme.palette.interactiveAccent, lineWidth: 1)
         }
       }
       .contentShape(Rectangle())
@@ -155,8 +155,7 @@ struct PersonalAPIButtonStyle: ButtonStyle {
     switch appearance {
     case .plain: .clear
     case .bordered: theme.palette.surface
-    case .filled: theme.palette.accent
-    case .outlined: .black
+    case .outlined: .clear
     }
   }
 }

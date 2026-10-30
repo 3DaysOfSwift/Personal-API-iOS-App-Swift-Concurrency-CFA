@@ -8,7 +8,8 @@ let package = Package(
     .target(
       name: "PersonalAPI", path: "PersonalAPI",
       exclude: [
-        "3 - App Resources", "4 - Swift Extensions", "1 - View/Components",
+        "1 - View/Views/Backups/BackupsView.swift", "3 - App Resources", "4 - Swift Extensions",
+        "1 - View/Components",
         "1 - View/PersonalAPIApp.swift", "1 - View/Views/Answer Feedback/AnswerFeedbackView.swift",
         "1 - View/Views/Conversation History/ConversationHistoryView.swift",
         "1 - View/Views/Edit Journal Entry/EditJournalEntryView.swift",
@@ -21,7 +22,8 @@ let package = Package(
         "1 - View/Views/Training/TrainingView.swift",
       ],
       sources: [
-        "1 - View/Theme", "2 - AppModel", "1 - View/Views/Answer Feedback/AnswerFeedbackViewModel.swift",
+        "1 - View/Theme", "2 - AppModel", "1 - View/Views/Backups/BackupsViewModel.swift",
+        "1 - View/Views/Answer Feedback/AnswerFeedbackViewModel.swift",
         "1 - View/Views/Conversation History/ConversationHistoryViewModel.swift",
         "1 - View/Views/Edit Journal Entry/EditJournalEntryViewModel.swift",
         "1 - View/Views/Export/ExportViewModel.swift",

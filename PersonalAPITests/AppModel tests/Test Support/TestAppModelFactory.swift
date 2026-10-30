@@ -122,7 +122,8 @@ actor FailingProcessor: MomentProcessor {
         preferences: preferences, repository: repository, moments: moments, profile: profile),
       conversations: ConversationsManager(
         repository: MemoryConversationRepository(), query: query, now: now),
-      lifeMap: LifeMapManager(repository: repository, extractor: LifeMapExtractor()))
+      lifeMap: LifeMapManager(repository: repository, extractor: LifeMapExtractor()),
+      backup: BackupStub())
   }
 }
 
@@ -141,4 +142,36 @@ actor MemoryConversationRepository: ConversationRepository {
   func export(_ conversations: [Conversation]) throws -> Data {
     try JSONEncoder().encode(conversations)
   }
+}
+
+@MainActor final class BackupStub: BackupFeature {
+  var errorContext: RecoveryFailureContext?
+  var syncIssue: CloudSyncIssue?
+  var accountStatus: String?
+  var isCheckingAccount = false
+  var checks = 0
+  func checkSyncAvailability() async { checks += 1 }
+  var isRestoring = false
+  var localCopies: [RecoveryCopy] = []
+  func loadLocalCopies() async {}
+  var isWorking = false
+  var lastBackup: Date?
+  var status = "Ready"
+  var syncStatus = "Ready"
+  var error: String?
+  var preview: RecoverySnapshot?
+  var requests: [Bool] = []
+  var restored = false
+  var inspected: URL?
+  func observeChanges() {}
+  func backup(force: Bool) async { requests.append(force) }
+  func inspect(_ url: URL) async { inspected = url }
+  func restorePreview() async { restored = true }
+  func discardPreview() { preview = nil }
+}
+
+actor CloudAccountStub: CloudAccountChecking {
+  var state: CloudAccountState = .available
+  func setState(_ state: CloudAccountState) { self.state = state }
+  func check() -> CloudAccountState { state }
 }
